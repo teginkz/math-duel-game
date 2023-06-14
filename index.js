@@ -7,10 +7,22 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+const { joinRoom, leaveRoom,
+  getRooms } = require('./rooms')
+
+const waitingRoom = [];
 io.on('connection', (socket) => {
-  socket.on('chat message', msg => {
-    io.emit('chat message', msg);
+  const id = socket.id;
+  console.log(`socket id = ${id}`);
+  socket.on('joinRoom', () => {
+    joinRoom(id, socket);
+    socket.emit('roomJoined', getRooms())
   });
+
+  socket.on('disconnect', () => {
+    leaveRoom(id)
+  })
+  console.log(waitingRoom.length);
 });
 
 http.listen(port, () => {
