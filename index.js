@@ -7,8 +7,12 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-const { joinRoom, leaveRoom,
-  getRooms } = require('./rooms')
+const {
+  joinRoom,
+  leaveRoom,
+  setReadyToPlay,
+  getRooms
+} = require('./rooms')
 
 const waitingRoom = [];
 io.on('connection', (socket) => {
@@ -21,6 +25,10 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     leaveRoom(id)
+  });
+
+  socket.on('readyToPlay', () => {
+    setReadyToPlay(id);
   })
   console.log(waitingRoom.length);
 });
